@@ -5,10 +5,7 @@
     "main": "main.js",
     "bin": "njs-cf-ddns.js",
     "scripts": {
-        "start": "node main.js",
-        "packWin": "pkg . --out-path=dist/ -t win-x64",
-        "packLinux": "pkg . --out-path=dist/ -t linux-x64",
-        "packMacOs": "pkg . --out-path=dist/ -t macos-x64"
+        "start": "node main.js"
     },
     "dependencies": {
         "fs-extra": "^10.0.0",
