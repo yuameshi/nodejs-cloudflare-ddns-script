@@ -1,0 +1,26 @@
+{
+    "name": "nodejs-cloudflare-ddns-script",
+    "version": "1.0.0",
+    "description": "Cloudflare DDNS Script",
+    "main": "main.js",
+    "bin": "njs-cf-ddns.js",
+    "scripts": {
+        "start": "node main.js",
+        "packWin": "pkg . --out-path=dist/ -t win-x64",
+        "packLinux": "pkg . --out-path=dist/ -t linux-x64",
+        "packMacOs": "pkg . --out-path=dist/ -t macos-x64"
+    },
+    "dependencies": {
+        "fs-extra": "^10.0.0",
+        "is-in-subnet": "^4.0.1",
+        "os": "^0.1.1",
+        "readline-sync": "^1.4.10",
+        "sync-request": "^6.1.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/HanHan233/node-cloudflare-dynamic-dns.git"
+    },
+    "author": "HanHan233",
+    "license": "GPL-3.0"
+}

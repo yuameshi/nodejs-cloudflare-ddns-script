@@ -1,0 +1,9 @@
+{
+	"cfKEY": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
+	"zoneID": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAM",
+	"email": "someone@example.com",
+	"zoneName": "example.com",
+	"recordType": "A",
+	"recordName": "ddns.example.com",
+	"TTL": 120
+}
