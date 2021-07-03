@@ -2,6 +2,11 @@
 This is a script to change Cloudflare DNS records automatically with your current IP address<br><br>
 ![](https://img.shields.io/badge/IPv6-Supported-flat.svg?style=flat-square)
 ![](https://img.shields.io/github/license/HanHan233/nodejs-cloudflare-ddns-script?style=flat-square)
+# Screenshots
+## Verbose mode:
+![](./screenshot.jpg)
+## Normal output`(Havn't upload yet)`
+## Quiet Output`(Havn't upload yet)`
 # Installation
 ```cmd
 npm install
