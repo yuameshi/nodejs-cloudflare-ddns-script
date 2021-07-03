@@ -109,7 +109,7 @@ exports.update = (option) => {
 		console.log("Unsupported Record/Cannot get IP!");
 		throw "Unsupported Record/Cannot get IP!";
 	}
-	console.log("Updating zone identifier.");
+	console.log("Fetching zone identifier.");
 	cfZoneID = JSON.parse(
 		request(
 			"GET",
@@ -124,7 +124,7 @@ exports.update = (option) => {
 		).getBody("UTF-8")
 	).result[0].id;
 	console.log("Zone Identifier:" + cfZoneID);
-	console.log("Updating record identifier.");
+	console.log("Fetching record identifier.");
 	cfRecordId = JSON.parse(
 		request(
 			"GET",
@@ -151,18 +151,18 @@ exports.update = (option) => {
 					"X-Auth-Email": config.email,
 				},
 				body: `{   
-        "id":"${cfZoneID}",
-        "type":"${config.recordType}",
-        "name":"${config.recordName}",
-        "content":"${IP}",
-        "ttl":${config.TTL}
-        }`,
+        			"id":"${cfZoneID}",
+        			"type":"${config.recordType}",
+        			"name":"${config.recordName}",
+        			"content":"${IP}",
+        			"ttl":${config.TTL}
+        		}`,
 				retry: true,
 			}
 		).getBody("UTF-8")
-	).success;
-	if (cfDdnsResult) {
+	);
+	if (cfDdnsResult.success) {
 		console.warn("Updated Successfully");
 	}
-	return cfDdnsResult;
+	return cfDdnsResult.success;
 };
