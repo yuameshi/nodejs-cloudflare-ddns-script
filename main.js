@@ -1,5 +1,5 @@
 const cfDdns=require('./njs-cf-ddns');
 
-cfDdns.updateSync({
+cfDdns.update({
     "mode": "verbose"
 });
