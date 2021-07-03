@@ -163,6 +163,9 @@ exports.update = (option) => {
 	);
 	if (cfDdnsResult.success) {
 		console.warn("Updated Successfully");
+	}else{
+		console.error('Something went wrong :(');
+		console.error(JSON.stringify(cfDdnsResult));
 	}
 	return cfDdnsResult.success;
 };
