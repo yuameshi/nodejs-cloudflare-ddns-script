@@ -1,5 +1,5 @@
 {
-	"cfKEY": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
+	"cfKey": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
 	"email": "someone@example.com",
 	"zoneName": "example.com",
 	"recordType": "A",

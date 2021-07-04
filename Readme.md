@@ -17,7 +17,7 @@ Make a copy of `config.sample.json`, and edit it with following rules.
 
 ```json
 {
-	"cfKEY": "Your Clouflare API Key, get it at https://dash.cloudflare.com/profile/api-tokens",
+	"cfKey": "Your Clouflare API Key, get it at https://dash.cloudflare.com/profile/api-tokens",
 	"email": "Email you uesd to login to Cloudflare",
 	"zoneName": "ZoneName",
 	"recordType": "A or AAAA",
