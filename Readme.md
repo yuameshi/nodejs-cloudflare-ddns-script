@@ -4,9 +4,11 @@ This is a script to change Cloudflare DNS records automatically with your curren
 ![](https://img.shields.io/github/license/HanHan233/nodejs-cloudflare-ddns-script?style=flat-square)
 # Screenshots
 ## Verbose mode:
-![](./screenshot.jpg)
-## Normal output`(Havn't upload yet)`
-## Quiet Output`(Havn't upload yet)`
+![](./screenshot-verbose.jpg)
+## Normal output
+![](./screenshot-normal.jpg)
+## Quiet Output
+![](./screenshot-quiet.jpg)
 # Installation
 ```cmd
 npm install
