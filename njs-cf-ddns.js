@@ -2,8 +2,11 @@ const request = require("sync-request");
 const iis = require("is-in-subnet");
 /**********************************************/
 exports.getV6 = (option) => {
-	if (option["mode"].match("normal") || option["mode"].match("quiet")) {
+	if (!option["mode"].match("verbose")) {
 		console.log = () => {};
+	}
+	if (option["mode"].match("quiet")) {
+		console.warn = () => {};
 	}
 	var netInterfaces = require("os").networkInterfaces();
 	var IPs = new Array();
@@ -80,15 +83,21 @@ exports.getV4 = () => {
 
 /**********************************************/
 exports.update = (option) => {
-	if (!option["mode"] == "verbose") {
+	if (!option["mode"].match("verbose")) {
 		console.log = () => {};
 	}
-	if (option["mode"] == "quiet") {
+	if (option["mode"].match("quiet")) {
 		console.warn = () => {};
 	}
 	if (!option["config.json"]) {
 		console.log("Reading configuration file.");
-		config = JSON.parse(require("fs-extra").readFileSync("./config.json"));
+		try {
+			config = JSON.parse(require("fs-extra").readFileSync("./config.json"));
+		} catch (error) {
+			console.error("Cannot read configuration!");
+			console.error(error);
+			return false;
+		}
 	} else {
 		console.log("Parameter 'config.json' is existed.");
 		config = option["config.json"];
@@ -110,35 +119,53 @@ exports.update = (option) => {
 		throw "Unsupported Record/Cannot get IP!";
 	}
 	console.log("Fetching zone identifier.");
-	cfZoneID = JSON.parse(
-		request(
-			"GET",
-			`https://api.cloudflare.com/client/v4/zones?name=${config.zoneName}`,
-			{
-				headers: {
-					"X-Auth-Key": config.cfKey,
-					"X-Auth-Email": config.email,
-				},
-				retry: true,
-			}
-		).getBody("UTF-8")
-	).result[0].id;
-	console.log("Zone Identifier:" + cfZoneID);
+	try {
+		cfZoneID = JSON.parse(
+			request(
+				"GET",
+				`https://api.cloudflare.com/client/v4/zones?name=${config.zoneName}`,
+				{
+					headers: {
+						"X-Auth-Key": config.cfKey,
+						"X-Auth-Email": config.email,
+					},
+					retry: true,
+				}
+			).getBody("UTF-8")
+		).result[0].id;
+		console.log("Zone Identifier:" + cfZoneID);
+	} catch (error) {
+		console.error(
+			"Emmm...It seemed that there's no zone \"" + config.zoneName + "\"..."
+		);
+		console.error(error);
+		return false;
+	}
 	console.log("Fetching record identifier.");
-	cfRecordId = JSON.parse(
-		request(
-			"GET",
-			`https://api.cloudflare.com/client/v4/zones/${cfZoneID}/dns_records?name=${config.recordName}`,
-			{
-				headers: {
-					"X-Auth-Key": config.cfKey,
-					"X-Auth-Email": config.email,
-				},
-				retry: true,
-			}
-		).getBody("UTF-8")
-	).result[0].id;
-	console.log("Record Identifier:" + cfRecordId);
+	try {
+		cfRecordId = JSON.parse(
+			request(
+				"GET",
+				`https://api.cloudflare.com/client/v4/zones/${cfZoneID}/dns_records?name=${config.recordName}`,
+				{
+					headers: {
+						"X-Auth-Key": config.cfKey,
+						"X-Auth-Email": config.email,
+					},
+					retry: true,
+				}
+			).getBody("UTF-8")
+		).result[0].id;
+		console.log("Record Identifier:" + cfRecordId);
+	} catch (error) {
+		console.error(
+			"Emmm...It seemed that there's no record \"" +
+				config.zoneName +
+				'"...'
+		);
+		console.error(error);
+		return false;
+	}
 	console.warn("Updating DNS Record to " + IP);
 
 	cfDdnsResult = JSON.parse(
