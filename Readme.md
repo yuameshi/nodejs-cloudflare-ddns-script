@@ -34,12 +34,13 @@ npm start
 ```
 ## To use it in your project
 ```javascript
-const ddns=require('node-cloudflare-dynamic-dns');
-ddns.update(options);
-ddns.updateSync(options); //through sync
+const ddns=require('nodejs-cloudflare-ddns-script');
+ddns.updateSync(option); //through sync function
+ddns.update(option)
+	.then(res => console.log(res)); //through async function
 ```
 The parameter `option` is *optional*.<br>
-Parameter `options` is like the followings:
+Parameter `option` is like the followings:
 ```javascript
 option={
 	"wanIPv4Site":"https://ipv4.icanhazip.com",	//Refers to the website which used to get your current IPv4 address. Default: https://ipv4.icanhazip.com

@@ -82,7 +82,7 @@ exports.getV4 = () => {
 };
 
 /**********************************************/
-exports.update = (option) => {
+exports.updateSync = (option) => {
 	if (!option["mode"].match("verbose")) {
 		console.log = () => {};
 	}
@@ -196,3 +196,9 @@ exports.update = (option) => {
 	}
 	return cfDdnsResult.success;
 };
+
+/**********************************************/
+exports.update=(option)=> {
+	var p = new Promise(this.updateSync(option));
+	return p;
+}
