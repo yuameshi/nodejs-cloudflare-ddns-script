@@ -83,12 +83,6 @@ exports.getV4 = () => {
 
 /**********************************************/
 exports.updateSync = (option) => {
-	if (!option["mode"].match("verbose")) {
-		console.log = () => {};
-	}
-	if (option["mode"].match("quiet")) {
-		console.warn = () => {};
-	}
 	if (!option["config.json"]) {
 		console.log("Reading configuration file.");
 		try {
@@ -101,6 +95,12 @@ exports.updateSync = (option) => {
 	} else {
 		console.log("Parameter 'config.json' is existed.");
 		config = option["config.json"];
+	}
+	if (!option["mode"].match("verbose")) {
+		console.log = () => {};
+	}
+	if (option["mode"].match("quiet")) {
+		console.warn = () => {};
 	}
 	if (option["wanIPv4Addr"]) {
 		wanIPv4Site = option["wanIPv4Addr"];
