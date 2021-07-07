@@ -1,12 +1,18 @@
 {
     "name": "nodejs-cloudflare-ddns-script",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "Cloudflare DDNS Script",
     "main": "main.js",
     "bin": "njs-cf-ddns.js",
     "scripts": {
         "start": "node main.js"
     },
+    "keywords": [
+        "Node.js",
+        "CloudFlare",
+        "DDNS",
+        "Dynamic DNS"
+    ],
     "dependencies": {
         "fs-extra": "^10.0.0",
         "is-in-subnet": "^4.0.1",
