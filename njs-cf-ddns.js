@@ -83,10 +83,14 @@ exports.getV4 = () => {
 
 /**********************************************/
 exports.updateSync = (option) => {
-	if (!option["config.json"]) {
-		console.log("Reading configuration file.");
+	if (option==undefined||option["config.json"]==undefined) {
+		console.log("Reading configuration file & initiating.");
 		try {
+			option=new Object;
+			option["mode"]="normal";
+			option["wanIPv4Site"] = "https://ipv4.icanhazip.com";
 			config = JSON.parse(require("fs-extra").readFileSync("./config.json"));
+			option["config.json"]=config;
 		} catch (error) {
 			console.error("Cannot read configuration!");
 			console.error(error);
@@ -104,8 +108,6 @@ exports.updateSync = (option) => {
 	}
 	if (option["wanIPv4Addr"]) {
 		wanIPv4Site = option["wanIPv4Addr"];
-	} else {
-		wanIPv4Site = "https://ipv4.icanhazip.com";
 	}
 	if (config.recordType == "A") {
 		IP = this.getV4();
@@ -199,6 +201,11 @@ exports.updateSync = (option) => {
 
 /**********************************************/
 exports.update=(option)=> {
-	var p = new Promise(this.updateSync(option));
+	try {
+		p = new Promise(this.updateSync(option));
+	} catch (error) {
+		console.error(":( Error occured!")
+		console.error(error);
+	}
 	return p;
 }
