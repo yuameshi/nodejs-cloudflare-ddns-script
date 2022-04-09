@@ -1,7 +1,7 @@
 # Node-CF-DDNS
 This is a script to change Cloudflare DNS records automatically with your current IP address<br><br>
 ![](https://img.shields.io/badge/IPv6-Supported-flat.svg?style=flat-square)
-![](https://img.shields.io/github/license/HanHan233/nodejs-cloudflare-ddns-script?style=flat-square)
+![](https://img.shields.io/github/license/Yuameshi/nodejs-cloudflare-ddns-script?style=flat-square)
 # Screenshots
 ## Verbose mode:
 ![](./screenshot-verbose.jpg)
