@@ -22,7 +22,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/HanHan233/nodejs-cloudflare-ddns-script.git"
+        "url": "https://github.com/Yuameshi/nodejs-cloudflare-ddns-script.git"
     },
     "author": "HanHan233",
     "license": "GPL-3.0"
