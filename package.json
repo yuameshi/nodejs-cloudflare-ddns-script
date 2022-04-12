@@ -1,9 +1,9 @@
 {
     "name": "nodejs-cloudflare-ddns-script",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Cloudflare DDNS Script",
     "main": "main.js",
-    "bin": "njs-cf-ddns.js",
+    "bin": "main.js",
     "scripts": {
         "start": "node main.js"
     },
@@ -25,5 +25,5 @@
         "url": "https://github.com/Yuameshi/nodejs-cloudflare-ddns-script.git"
     },
     "author": "Yuameshi",
-    "license": "GPL-3.0"
+    "license": "MIT"
 }
