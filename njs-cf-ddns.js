@@ -1,211 +1,120 @@
-const request = require("sync-request");
-const iis = require("is-in-subnet");
-/**********************************************/
-exports.getV6 = (option) => {
-	if (!option["mode"].match("verbose")) {
-		console.log = () => {};
-	}
-	if (option["mode"].match("quiet")) {
-		console.warn = () => {};
-	}
-	var netInterfaces = require("os").networkInterfaces();
-	var IPs = new Array();
-	console.log(
-		Object.keys(netInterfaces).length +
-			" network adapters found : " +
-			Object.keys(netInterfaces).toString()
-	);
-	for (let i in Object.keys(netInterfaces)) {
-		var temp = netInterfaces[Object.keys(netInterfaces)[i]];
-		console.log(
-			"	Checking network adapter " + Object.keys(netInterfaces)[i]
-		);
-		console.log(
-			"	Found " +
-				Object.keys(temp).length +
-				" IP on " +
-				Object.keys(netInterfaces)[i]
-		);
-		for (let j in Object.keys(temp)) {
-			console.log(
-				"		Checking IP " +
-					temp[j].address +
-					" of " +
-					Object.keys(netInterfaces)[j]
-			);
-			if (
-				iis.isIPv6(temp[j].address) &&
-				iis.isPrivate(temp[j].address) == false &&
-				temp[j].address != "::1"
-			) {
-				IPs.push(temp[j].address);
-			} else {
-				console.log(
-					"		IP " +
-						temp[j].address +
-						" is NOT an IPv6 address or a public address"
-				);
-			}
+const iis = require('is-in-subnet');
+const fetch = require('node-fetch');
+exports.getV6 = () => {
+	return new Promise((resolve) => {
+		const netInterfaces = require('os').networkInterfaces();
+		const ipv6AddrArray = new Array();
+		const ipv6Regexp =
+			/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+		for (const interface in netInterfaces) {
+			const currentInterface = netInterfaces[interface];
+			currentInterface.forEach((addr) => {
+				if (
+					ipv6Regexp.test(addr.address) &&
+					iis.isPrivate(addr.address) == false &&
+					addr.address != '::1'
+				) {
+					ipv6AddrArray.push(addr.address);
+				}
+			});
 		}
-	}
-	if (IPs.length < 1) {
-		console.log("Error: cannot find any public IPv6 address!");
-		if (option["autoSwitch"]) {
-			IP = request("GET", "https://ipv4.icanhazip.com")
-				.getBody("UTF-8")
-				.replace("\n", "");
-		} else {
-			if (
-				require("readline-sync").question("Use IPv4 Mode?[y/N]") == "y"
-			) {
-			}
-		}
-	}
-	if (IPs.length > 1) {
-		if (option["mode"].match("quiet")) {
-			i = 0;
-		} else {
-			console.warn(IPs);
-			i = require("readline-sync").question(
-				"There are multiple public IPs found, which one to choose:"
-			);
-		}
-		IP = IPs[i - 1];
-	}
-	return IP;
+		resolve(ipv6AddrArray);
+	});
 };
-/**********************************************/
-exports.getV4 = () => {
-	return request("GET", "https://ipv4.icanhazip.com")
-		.getBody("UTF-8")
-		.replace("\n", "");
+exports.getV4 = (wanIPSite) => {
+	return new Promise((resolve) => {
+		fetch(wanIPSite || 'https://ipv4.icanhazip.com')
+			.then((res) => res.text())
+			.then((text) => {
+				resolve(text.toString().replace(/[\r\n]/g, ''));
+			});
+	});
 };
-
-/**********************************************/
-exports.updateSync = (option) => {
-	if (option==undefined||option["config.json"]==undefined) {
-		console.log("Reading configuration file & initiating.");
+exports.update = async (option) => {
+	let config = option;
+	if (config == undefined) {
 		try {
-			option=new Object;
-			option["mode"]="normal";
-			option["wanIPv4Site"] = "https://ipv4.icanhazip.com";
-			config = JSON.parse(require("fs-extra").readFileSync("./config.json"));
-			option["config.json"]=config;
+			config = require('./config.json');
 		} catch (error) {
-			console.error("Cannot read configuration!");
-			console.error(error);
-			return false;
+			throw new Error('Cannot read configuration!', error);
 		}
-	} else {
-		console.log("Parameter 'config.json' is existed.");
-		config = option["config.json"];
 	}
-	if (!option["mode"].match("verbose")) {
-		console.log = () => {};
+	let IP;
+	if (config.recordType == 'AAAA') {
+		IP = (await this.getV6())[0];
 	}
-	if (option["mode"].match("quiet")) {
-		console.warn = () => {};
+	if (
+		config.recordType == 'A' ||
+		config.recordType == undefined ||
+		(config.autoSwitch == true && IP == undefined)
+	) {
+		IP = await this.getV4(config['wanIPv4Site']);
 	}
-	if (option["wanIPv4Addr"]) {
-		wanIPv4Site = option["wanIPv4Addr"];
-	}
-	if (config.recordType == "A") {
-		IP = this.getV4();
-	}
-	if (config.recordType == "AAAA") {
-		IP = this.getV6(option);
-	}
-	console.warn("Current IP:" + IP);
 	if (!IP) {
-		console.log("Unsupported Record/Cannot get IP!");
-		throw "Unsupported Record/Cannot get IP!";
+		throw new Error('Unsupported Record/Cannot get IP!');
 	}
-	console.log("Fetching zone identifier.");
-	try {
-		cfZoneID = JSON.parse(
-			request(
-				"GET",
-				`https://api.cloudflare.com/client/v4/zones?name=${config.zoneName}`,
-				{
-					headers: {
-						"X-Auth-Key": config.cfKey,
-						"X-Auth-Email": config.email,
-					},
-					retry: true,
-				}
-			).getBody("UTF-8")
-		).result[0].id;
-		console.log("Zone Identifier:" + cfZoneID);
-	} catch (error) {
-		console.error(
-			"Emmm...It seemed that there's no zone \"" + config.zoneName + "\"..."
-		);
-		console.error(error);
-		return false;
-	}
-	console.log("Fetching record identifier.");
-	try {
-		cfRecordId = JSON.parse(
-			request(
-				"GET",
-				`https://api.cloudflare.com/client/v4/zones/${cfZoneID}/dns_records?name=${config.recordName}`,
-				{
-					headers: {
-						"X-Auth-Key": config.cfKey,
-						"X-Auth-Email": config.email,
-					},
-					retry: true,
-				}
-			).getBody("UTF-8")
-		).result[0].id;
-		console.log("Record Identifier:" + cfRecordId);
-	} catch (error) {
-		console.error(
-			"Emmm...It seemed that there's no record \"" +
-				config.zoneName +
-				'"...'
-		);
-		console.error(error);
-		return false;
-	}
-	console.warn("Updating DNS Record to " + IP);
-
-	cfDdnsResult = JSON.parse(
-		request(
-			"PUT",
-			`https://api.cloudflare.com/client/v4/zones/${cfZoneID}/dns_records/${cfRecordId}`,
+	const cfZoneIdJSON = await (
+		await fetch(
+			`https://api.cloudflare.com/client/v4/zones?name=${config.zoneName}`,
 			{
+				method: 'GET',
 				headers: {
-					"X-Auth-Key": config.cfKey,
-					"X-Auth-Email": config.email,
+					'X-Auth-Email': config.email,
+					'X-Auth-Key': config.cfKey,
 				},
-				body: `{   
-        			"id":"${cfZoneID}",
-        			"type":"${config.recordType}",
-        			"name":"${config.recordName}",
-        			"content":"${IP}",
-        			"ttl":${config.TTL}
-        		}`,
-				retry: true,
 			}
-		).getBody("UTF-8")
-	);
-	if (cfDdnsResult.success) {
-		console.warn("Updated Successfully");
-	}else{
-		console.error('Something went wrong :(');
-		console.error(JSON.stringify(cfDdnsResult));
+		)
+	).json();
+	if (cfZoneIdJSON.success == false) {
+		throw new Error(cfZoneIdJSON.errors[0].message);
+	}
+	if (!cfZoneIdJSON.result[0]) {
+		throw new Error('No such zone!');
+	}
+	const cfZoneId = cfZoneIdJSON.result[0].id;
+	const cfRecordIdJSON = await (
+		await fetch(
+			`https://api.cloudflare.com/client/v4/zones/${cfZoneId}/dns_records?name=${config.recordName
+				.concat('.')
+				.concat(config.zoneName)}`,
+			{
+				method: 'GET',
+				headers: {
+					'X-Auth-Email': config.email,
+					'X-Auth-Key': config.cfKey,
+				},
+			}
+		)
+	).json();
+	if (cfRecordIdJSON.success == false) {
+		throw new Error(cfZoneIdJSON.errors[0].message);
+	}
+	if (!cfRecordIdJSON.result[0]) {
+		throw new Error('No such record!');
+	}
+	const cfRecordId = cfRecordIdJSON.result[0].id;
+	const cfDdnsResult = await (
+		await fetch(
+			`https://api.cloudflare.com/client/v4/zones/${cfZoneId}/dns_records/${cfRecordId}`,
+			{
+				method: 'PUT',
+				headers: {
+					'X-Auth-Email': config.email,
+					'X-Auth-Key': config.cfKey,
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					id: cfZoneId,
+					type: config.recordType || 'A',
+					name: config.recordName.concat('.').concat(config.zoneName),
+					content: IP,
+					ttl: config.TTL || 60,
+				}),
+			}
+		)
+	).json();
+	if (!cfDdnsResult.success) {
+		throw new Error('Cannot update DDNS!', cfDdnsResult);
 	}
 	return cfDdnsResult.success;
 };
-
-/**********************************************/
-exports.update=(option)=> {
-	try {
-		p = new Promise(this.updateSync(option));
-	} catch (error) {
-		console.error(":( Error occured!")
-		console.error(error);
-	}
-	return p;
-}

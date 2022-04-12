@@ -1,8 +1,10 @@
 {
+	"wanIPv4Site":"https://ipv4.icanhazip.com",
+	"autoSwitch": false,
 	"cfKey": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
 	"email": "someone@example.com",
 	"zoneName": "example.com",
 	"recordType": "A",
-	"recordName": "ddns.example.com",
-	"TTL": 120
+	"recordName": "ddns",
+	"TTL": 60
 }

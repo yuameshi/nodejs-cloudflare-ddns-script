@@ -1,63 +1,57 @@
 # Node-CF-DDNS
+
 This is a script to change Cloudflare DNS records automatically with your current IP address<br><br>
 ![](https://img.shields.io/badge/IPv6-Supported-flat.svg?style=flat-square)
 ![](https://img.shields.io/github/license/Yuameshi/nodejs-cloudflare-ddns-script?style=flat-square)
-# Screenshots
-## Verbose mode:
-![](./screenshot-verbose.jpg)
-## Normal output
-![](./screenshot-normal.jpg)
-## Quiet Output
-![](./screenshot-quiet.jpg)
+
 # Installation
-```cmd
-npm install
-```
-## Configuration
 
-Make a copy of `config.sample.json`, and edit it with following rules.
-
-```json
-{
-	"cfKey": "Your Clouflare API Key, get it at https://dash.cloudflare.com/profile/api-tokens",
-	"email": "Email you uesd to login to Cloudflare",
-	"zoneName": "ZoneName",
-	"recordType": "A or AAAA",
-	"recordName": "Record Name",
-	"TTL": 120
-}
-```
-Then rename it to `config.json`.
-## To run it directly
 ```cmd
-npm start
+npm install nodejs-cloudflare-ddns-script --save
 ```
-## To use it in your project
-```javascript
-const ddns=require('nodejs-cloudflare-ddns-script');
-ddns.updateSync(option); //through sync function
-ddns.update(option)
-	.then(res => console.log(res)); //through async function
-```
-The parameter `option` is *optional*.<br>
-Parameter `option` is like the followings:
-```javascript
-option={
-	"wanIPv4Site":"https://ipv4.icanhazip.com",	//Refers to the website which used to get your current IPv4 address. Default: https://ipv4.icanhazip.com
-												//If you're using IPv6 mode , then this is optional.
-	"mode": "verbose|normal|quiet",				//Output mode. Default: "normal"
-				 								//if there's multiple IPv6 address, quiet mode will choose the first one automaticly.
-	"autoSwitch": true|false,					//If IPv6 mode cannot use , use IPv4 automaticly or it will throw out an exception. Default: false.
-	"config.json":{ 							//With this parameter the program will not read file 'config.json'
-		"cfKEY": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
-		"email": "someone@example.com",
-		"zoneName": "example.com",
-		"recordType": "A",
-		"recordName": "ddns.example.com",
-		"TTL": 120
-	}
+
+## Usage
+
+### Notice: `updateSync` is no longer available.
+
+```js
+const cfddns = require('nodejs-cloudflare-ddns-script');
+const options = {
+	"wanIPv4Site": "https://ipv4.icanhazip.com",
+		// The website which used to get your current public IPv4 address.
+		// Default: https://ipv4.icanhazip.com
+	"autoSwitch": false,
+		//If you don't have any public IPv6 address
+		//program will use IPv4 automaticly or it will throw an exception.
+		//Default: false.
+	"cfKey": "EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
+		//Your Cloudflare API key
+	"email": "someone@example.com",
+		//Your Cloudflare email
+	"zoneName": "example.com",
+		//Your Cloudflare zone name
+	"recordType": "A",
+		//The type of record you want to update.
+		//Default: A
+	"recordName": "ddns",
+		//The name of the record you want to update.
+	"TTL": 60
+		//The TTL of the record you want to update.
+		//Default: 60
 }
+cfddns.update(options);
+	.then((ret) => {
+	  console.log(ret);	//true | false
+	})
+	.catch((err) => {
+	  console.error(err);
+	});
 ```
-# If there is a better code solution, please send a `Pull Request` or `Issue` to me
-Thanks.<br>
+
+Or create `config.json` under your project folder with the content of parameter `options`.
+
+# If there is a better code solution, please open a `Pull Request` or `Issue` to me
+
+Thanks.
+
 :D
