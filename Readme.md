@@ -35,9 +35,11 @@ const options = {
 		//Default: A
 	"recordName": "ddns",
 		//The name of the record you want to update.
-	"TTL": 60
+	"TTL": 60,
 		//The TTL of the record you want to update.
 		//Default: 60
+	"proxied": false
+		//Default: false
 }
 cfddns.update(options);
 	.then((ret) => {

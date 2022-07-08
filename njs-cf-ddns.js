@@ -109,6 +109,7 @@ exports.update = async (option) => {
 					name: config.recordName.concat('.').concat(config.zoneName),
 					content: IP,
 					ttl: config.TTL || 60,
+					proxied: config.proxied || false
 				}),
 			}
 		)

@@ -6,5 +6,6 @@
 	"zoneName": "example.com",
 	"recordType": "A",
 	"recordName": "ddns",
-	"TTL": 60
+	"TTL": 60,
+	"proxied": false
 }
